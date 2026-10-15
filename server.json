@@ -28,7 +28,8 @@
           "description": "Optional per-process data directory (profiles, output, logs, license state). Defaults to %LOCALAPPDATA%\\ChromeWalk on Windows, ~/Library/Application Support/ChromeWalk on macOS.",
           "isRequired": false
         }
-      ]
+      ],
+      "fileSha256": "08150e3a2def2d866e0fa7a4a96d38f1c8297e362e1b60b5193d10961682d659"
     }
   ],
   "_meta": {
@@ -39,9 +40,6 @@
       "platform_support": [
         "windows"
       ]
-    },
-    "io.github.chromewalk/chromewalk:publish-status": {
-      "note": "TODO before running `mcp-publisher publish`: packages[0].identifier above is the PLANNED release-asset URL, not a live one yet - no GitHub Release for ChromeWalk-Claude-Extension.mcpb has been published at this repository. Before publishing to the registry: (1) build the .mcpb bundle (tools/build_mcpb_binary.py), (2) create a GitHub Release tagged v14.0.1 and upload ChromeWalk-Claude-Extension.mcpb to it, (3) compute the artifact hash with `openssl dgst -sha256 ChromeWalk-Claude-Extension.mcpb` and add it back to packages[0] as `fileSha256` (required by the registry's MCPB verification even though the base JSON Schema does not enforce it structurally), (4) re-validate with `mcp-publisher validate` before publishing. Until then this server.json is schema-valid but NOT ready to publish as an mcpb package."
     }
   }
 }
