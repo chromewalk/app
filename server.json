@@ -1,0 +1,47 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.chromewalk/chromewalk",
+  "title": "ChromeWalk",
+  "description": "Local browser automation for AI agents: real-browser fetch, capture, smoke tests, cross-engine QA.",
+  "version": "14.0.1",
+  "repository": {
+    "url": "https://github.com/chromewalk/app",
+    "source": "github"
+  },
+  "websiteUrl": "https://chromewalk.com",
+  "packages": [
+    {
+      "registryType": "mcpb",
+      "identifier": "https://github.com/chromewalk/app/releases/download/v14.0.1/ChromeWalk-Claude-Extension.mcpb",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "CHROMEWALK_LICENSE",
+          "description": "License key (sign up at https://api.chromewalk.com/register.html or run `chromewalk register <your-email>`). Read once when the MCP server starts and used to activate this device if it is not already activated (the same value as the bundle's license_key setting). Alternatively run `chromewalk activate <key>`. Without an activated license every licensed tool call returns a license-required error.",
+          "isRequired": false,
+          "isSecret": true
+        },
+        {
+          "name": "CHROMEWALK_DATA_DIR",
+          "description": "Optional per-process data directory (profiles, output, logs, license state). Defaults to %LOCALAPPDATA%\\ChromeWalk on Windows, ~/Library/Application Support/ChromeWalk on macOS.",
+          "isRequired": false
+        }
+      ]
+    }
+  ],
+  "_meta": {
+    "io.modelcontextprotocol.registry/publisher-provided": {
+      "license_model": "proprietary",
+      "license_requirement": "License required, fail-closed. Sign up at https://api.chromewalk.com/register.html or run `chromewalk register <your-email>`; activate via the CHROMEWALK_LICENSE env var, the bundle's license_key setting, or `chromewalk activate <key>`. There is no keyless trial: until a license is activated, every licensed tool call returns a license-required error (CLI exit 4). A missing, malformed, tampered, revoked or expired license, or any error while evaluating it, blocks the call - it never falls open. The only allowance is an offline grace window for an already-activated, signed license that cannot reach the license server. The diagnostics chromewalk_doctor, chromewalk_procs, chromewalk_config (show/get), the recovery tool chromewalk_reset (soft), the gap-report tool chromewalk_recommend, the sign-up tools chromewalk_register / chromewalk_activate and the dispatcher built-ins chromewalk_calls / chromewalk_cancel work without a license.",
+      "python_version": ">=3.10",
+      "platform_support": [
+        "windows"
+      ]
+    },
+    "io.github.chromewalk/chromewalk:publish-status": {
+      "note": "TODO before running `mcp-publisher publish`: packages[0].identifier above is the PLANNED release-asset URL, not a live one yet - no GitHub Release for ChromeWalk-Claude-Extension.mcpb has been published at this repository. Before publishing to the registry: (1) build the .mcpb bundle (tools/build_mcpb_binary.py), (2) create a GitHub Release tagged v14.0.1 and upload ChromeWalk-Claude-Extension.mcpb to it, (3) compute the artifact hash with `openssl dgst -sha256 ChromeWalk-Claude-Extension.mcpb` and add it back to packages[0] as `fileSha256` (required by the registry's MCPB verification even though the base JSON Schema does not enforce it structurally), (4) re-validate with `mcp-publisher validate` before publishing. Until then this server.json is schema-valid but NOT ready to publish as an mcpb package."
+    }
+  }
+}
