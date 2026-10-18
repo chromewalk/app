@@ -1,358 +1,194 @@
 # ChromeWalk
 
-**A real, local browser for your AI.** ChromeWalk gives coding and research agents a
-private, standalone Chrome-for-Testing instance they drive directly on your own machine —
-no cloud relay, no tunnel, never your personal Chrome profile. It fetches WAF-protected
-pages, captures full network/screenshot evidence, harvests e-commerce catalogs, runs
-performance/accessibility inspection, and drives cross-engine QA (Chromium/WebKit/Firefox),
-all exposed to your AI client as standard [MCP](https://modelcontextprotocol.io) tools.
+**A real, private browser your AI can use, running on your own computer.**
 
-This repository is the **public listing and install package** for ChromeWalk. It does not
-contain ChromeWalk's source code, its signing keys, or its server code — those stay in the
-private engineering repository. What's here is everything a client (Claude Desktop, Claude
-Code, Codex, Cursor, VS Code, Gemini CLI, Windsurf/Cline/Continue, ...) needs to discover and
-install the compiled, licensed ChromeWalk build, plus the packaging manifests for each
-distribution channel (MCP Registry, Gemini CLI extension, Claude Code plugin, Cursor
-directory).
+Ask your AI assistant to open a page, check a site or collect data, and ChromeWalk does it in its own
+browser on your machine. No cloud relay, no tunnel, and never your personal Chrome profile.
 
-- Website: https://chromewalk.com
-- Docs: https://chromewalk.com/docs/
-- What is ChromeWalk: https://chromewalk.com/docs/what-is-chromewalk.html
-- Privacy: https://chromewalk.com/privacy.html
-- Terms: https://chromewalk.com/terms.html
-- Support / FAQ: https://chromewalk.com/faq.html
-- License terms: [`LICENSE`](./LICENSE) (full EULA also at https://chromewalk.com/LICENSE.txt)
+[Website](https://chromewalk.com) · [Docs](https://chromewalk.com/docs/) · [Download](https://chromewalk.com/download.html) · [FAQ](https://chromewalk.com/faq.html) · [Privacy](https://chromewalk.com/privacy.html) · [Terms](https://chromewalk.com/terms.html)
 
 ---
 
-## License — a key is required
+## What it does
 
-ChromeWalk is **proprietary software and requires a license**. There is no
-anonymous or keyless trial mode in the shipped default build: until a license key is
-activated on the machine, every ChromeWalk tool call returns a "license required" error.
-(The offline grace window applies only to an already-activated license that temporarily
-cannot reach the license server - it is not a keyless trial.)
+- **Opens pages in a real browser**, including pages that block simple downloaders, and hands your AI the text,
+  status and title. A challenge page is reported, never solved.
+- **Takes screenshots and full evidence**: every screen size you need, every file a page loads, and the console and
+  network log.
+- **Checks your site for breakage**: quick self-checking tests across many pages and screen sizes, with 12 built-in
+  problem detectors, plus scripted clicks and logins to reach the pages behind them.
+- **Tests across browsers**: the same page in Chromium, Firefox and WebKit (Safari's engine), with the differences
+  highlighted. You can also use your installed Chrome, Edge or Brave, always with ChromeWalk's own private profile.
+- **Audits design and SEO**: colours, fonts, spacing and components across a site, an SEO check with ranked fixes,
+  and visual comparisons against a saved version so you spot unexpected changes.
+- **Collects store data**: products, prices, images, specs and filters from an online store, into JSON or CSV.
+- **Stays light for your AI**: 35 tools with short descriptions, short results, and big outputs saved as files on
+  your computer.
 
-1. Sign up at **https://chromewalk.com/register.html** with your email - or, from 13.0, just ask your
-   AI assistant to sign you up: the `register` tool emails your key, and the `activate` tool activates
-   it, both inside the chat and without a license. Your license key is tied to that email address.
-2. Install ChromeWalk for your client (below).
-3. Activate with either:
-   - the `CHROMEWALK_LICENSE` environment variable (read once when the MCP server starts;
-     it activates the device if it is not already activated), or
-   - `cw activate <key>` from a terminal after install, or
-   - pasting the key into the client's own extension/plugin settings UI (Claude Desktop
-     `.mcpb` exposes a `license_key` field in `user_config`).
+## Who it's for
 
-ChromeWalk does **not** collect page content, option values, file paths, or credentials. Its usage
-telemetry is required by the license (there is no opt-out); from 12.0 each tool run reports the
-target URL (scheme, host and path - credentials, query strings and fragments are removed on your
-computer first) and its domain. Your license key itself is never sent in telemetry, only a SHA-256
-hash of it (`license_hash`), which links the install to your account. See the
-[Privacy Policy](https://chromewalk.com/privacy.html) for exactly what is collected.
+Developers, QA and SEO teams, designers and researchers who already work with an AI assistant and want it to see
+the real web.
 
----
+**Works with AI apps that run on your computer.** One command, `cw connect`, sets ChromeWalk up in 16 of them:
+Claude Desktop, Claude Code, Codex, Cursor, Windsurf, Cline, Gemini CLI, VS Code with GitHub Copilot, Zed, Continue,
+GitHub Copilot CLI, Kiro, Amazon Q Developer, Kilo Code, Goose and Visual Studio (Windows only, so a Mac gets 15).
+Any other app that supports local MCP servers can be set up by hand.
 
-## What's new in 14.0
+**Not yet:** chat apps that run in the cloud can't reach a program on your computer. That means ChatGPT (web,
+desktop or phone), Claude on the web or phone, and the Gemini app. For OpenAI, use **Codex**: it works today.
 
-**Measure the page, walk it politely, keep your AI's context small.** Still 35 MCP tools; every new feature is an option on a
-tool you already have.
-
-- **Content and SEO** - word, sentence and readability counts and image alt text on every audit; `compare --prose` (shingle
-  overlap, containment, longest shared passages); `audit --dedupe` (near-duplicate pages, duplicate titles / descriptions / H1s,
-  merge the results of several agents); `audit --layers seo` with `--check-links` (robots.txt, sitemap, llms.txt, canonical,
-  hreflang, Open Graph, structured data, image SEO, a score and ranked fixes).
-- **Smart file names and a navigation log** - captures are named `{seq}_{host}_{path}_{title}_{viewport}` and a
-  `nav-log.jsonl` maps every file to its URL, referrer and step (`--name-template`, `--no-smart-names` for the old names).
-- **One error collector for every walk** - hidden breaks (API 4xx/5xx, broken images, 404 scripts, CSP, mixed content, long
-  tasks) and a WAF verdict in `result.walk`, `--walk-profile scrape|audit|parity`, polite per-host pacing, `--interact` /
-  `--keep-alive` and stale-page detection. No humanised or randomised behaviour.
-- **Proxy and Nimble** - `--proxy`, and an opt-in `--network nimble` (your own Nimble account) with geo-targeting; the engine
-  parity matrix in the docs on chromewalk.com.
-- **Lean for your AI** - the tool list is about a tenth of its former size (one line per tool, core arguments, an `advanced`
-  object), `help: "brief" | "full"` on every tool, short results with file paths, and an idle-free server.
-- **Zero zombies** - a hard-killed run takes its Chromium, Firefox and WebKit browsers with it.
-- Behaviour changes (file names, always-on pacing, `--interact` in the audit/parity profiles, new report fields) are listed in
-  the release notes.
-
-## What's new in 13.0
-
-**Test the flows, not just the pages.** 35 MCP tools.
-
-- **Sign up and activate from your AI assistant** (`register`, `activate`) - no terminal needed. The
-  Claude Desktop extension's license key field is optional.
-- **Activate once per computer** - `cw activate <key> --remember` keeps the key in Windows Credential
-  Manager and every other install for your user activates itself; `CHROMEWALK_LICENSE_FILE` for CI.
-- **Click-flow coverage in smoke** - every scripted step can carry an `expect`, each step is checked for the
-  errors and failed requests it caused (a failed step now fails the page), `explore` clicks the safe
-  controls you never scripted (never delete / log out / pay / submit), and `coverage` reports what was
-  exercised.
-- **Logged-in testing on Firefox and WebKit** - `xengine` and `render` take `session`, `auth` and
-  `local_storage_file`, and `xengine` runs the suite's steps, checks and Explore on every engine.
-- **Microsoft Edge and Brave** - `browser: "edge" | "brave" | "chrome"` (or a path) on smoke, fetch,
-  dump, screenshot, compare, design, audit and webinspect, always with ChromeWalk's own private profile.
-- **Reliability** - a killed run no longer leaves Chrome behind; large design / audit runs are batched
-  and resumable (`resume`); runs report where their time went; `doctor` shows the install folders and
-  explains slow starts.
-- **More AI tools in one command** - `cw connect` adds GitHub Copilot CLI, Kiro, Amazon Q Developer,
-  Kilo Code, Goose and Visual Studio.
-- **Skills** for Claude Code, Cursor and Codex in [`skills/`](./skills/) - copy them into your agent's
-  skills folder.
+**Runs on:** Windows 10 and 11 (x64), and macOS on Apple Silicon. There is no Intel Mac or Linux build yet.
+Browsers: Chromium, Firefox and WebKit, plus your installed Chrome, Edge or Brave.
 
 ---
 
-## What's new in 12.0
+## Quick start
 
-- **`audit`** (one-pass UI-uniformity audit bundle) and **`baseline`** (per-page and per-selector visual
-  regression with an anti-clobber gate) - 33 MCP tools.
-- **Smoke**: slow is not failed, failure artifact bundles, changed-pages-only runs, a base-URL override,
-  fewer infrastructure flakes.
-- **Pre-capture hooks and browser options** on every capture tool (waits, scripts, attributes, console
-  noise filters; language, time zone, throttling, reduced motion, `auth`).
-- **Headless by default**, a **self-updating Windows app** (signed, self-tested, automatic rollback), and
-  end-to-end recipes in the docs. Full notes: [CHANGELOG.md](./CHANGELOG.md).
+1. **Install ChromeWalk.**
+   - Windows (PowerShell): `powershell -c "irm https://chromewalk.com/install.ps1 | iex"`
+   - Mac (Terminal): `curl -fsSL https://chromewalk.com/install.sh | bash`
+   - Claude Desktop on Windows: install the [ChromeWalk extension](https://chromewalk.com/download/claude) instead.
+2. **Connect your AI app.** Run `cw connect` in a new terminal. It finds the AI apps on your computer and adds
+   ChromeWalk to each one. Then restart the app.
+3. **Sign up and activate.** Ask your AI: *"Sign me up for ChromeWalk with my email address."* The key arrives by
+   email. Then: *"Activate ChromeWalk with the key from my email"*, or run `cw activate <key>` in a terminal.
 
----
-
-## What's new in 10.0
-
-**Reliability release.** MCP calls now run concurrently instead of serially, the browser layer
-cleans up after itself even when a call is cancelled or hangs, and every tool (CLI and MCP)
-shares one error/exit-code contract. Under multi-agent load (same machine, both licensed, 3
-reps per scenario):
-
-| Scenario | 9.0 | 10.0 |
-|---|---|---|
-| 8 pipelined MCP calls | fully serial; p50 24.4s, max 47.4s | up to 6 browsers at once; p50 8.9s, max 15.1s |
-| 2 servers x (4 calls + 1 hang) | the hung call blocks every call behind it; up to 3 browser processes left after exit | other calls unaffected; every cancel honoured; 0 browser processes left |
-| a forced tool timeout | server wedged, nothing answered within 120s; 10-14 browser processes left | a structured timeout error in 5-10s; 0 browser processes left |
-| 12 parallel smoke runs on a saturated CPU | 3 launch failures | 0 launch failures (about 59% slower wall time — launch slots are throttled above 90% CPU) |
-
-- **New `compare` tool** — page-vs-page, directory, or saved-baseline diffs across visual, DOM,
-  text, network, structured-data, SEO, links, styles, accessibility, console, headers and
-  performance layers, with noise calibration across repeated captures.
-- **New diagnostics** — `doctor` (read-only environment health check), `procs` (census of
-  ChromeWalk's own browser process trees, with orphan cleanup), `schema` (JSON-LD / microdata /
-  RDFa / OpenGraph validation and diff), `cms` (platform fingerprint), and `config` (every
-  tuning key, its effective value, and where it came from). The diagnostics work **without** a
-  license, so they're how you debug a broken license or install.
-- **Tunable configuration** — `chromewalk config show|get|set|unset` covers worker/agent counts,
-  launch retries and backoff, connect/command timeouts, the circuit-breaker threshold, profile
-  mode, default resource blocking, and more (flag > environment variable > config file > auto).
-- **One exit-code contract everywhere:**
-
-  | code | meaning |
-  |---|---|
-  | 0 | ok |
-  | 2 | usage / bad arguments |
-  | 3 | checked failure — the tool ran and the target failed a check (a diff, a missing required field, a page that never loaded); still a valid result |
-  | 4 | license required |
-  | 5 | infrastructure failure — browser launch/connect failed after retries, or a dependency is missing; retry, or run the `doctor` tool |
-  | 6 | timed out or cancelled |
-  | 1 | unexpected internal error |
-
-- An unreachable page is now reported as a real failure (exit `3`) instead of a false "success"
-  against the browser's own error page, and navigation now actually stops at your timeout.
-
-## Tools
-
-ChromeWalk exposes 35 MCP tools once installed and licensed. The sign-up tools (`register`,
-`activate`) and the diagnostic tools (`doctor`, `procs`, `config`, `reset`, `recommend`, `calls`, `cancel`)
-work without a license — they're how you get a key and check a broken install or license state.
-
-- `register` *(no license required)* — sign up: the license key is emailed to the address you give (never shown in the chat)
-- `activate` *(no license required)* — activate this install with your key (the key is never echoed back)
-
-- `fetch` — real-browser fetch (pages that block curl usually load; a challenge page is reported, never solved): status, title, text, validation, optional raw response bodies
-- `screenshot` — screenshot or walk one URL or a list of URLs
-- `render` — cross-engine render (Chromium/WebKit/Firefox) with pixel diff / A-B / golden baselines
-- `webinspect` — console errors, HAR capture, Core Web Vitals, a light accessibility pass
-- `pwa` — manifest / service worker / offline reload / HTTPS / installability checks
-- `notify` — Web Notifications permission grant/deny plus captured notifications
-- `jsonquery` — query/flatten JSON or YMM trees, CSV export (no browser needed)
-- `api` — parallel API suite runner with adaptive anti-spam back-off
-- `flow` — scripted SPA flow (goto/click/type/wait_for/capture) to reach auth/role-gated views
-- `dump` — full-evidence capture: every response, raw bodies, and screenshots, multi-agent, memory-governed
-- `drive` — drive a running browser window by CDP: navigate/read/eval/screenshot, or ask a chat app
-- `smoke` — concurrent self-verifying smoke gate (page x viewport units, layout detectors, steps/asserts)
-- `harvest` — e-commerce harvester: normalized products (sku/price/availability/fitment/metafields)
-- `facets` — store-level filter/fitment axes (metafield keys, option values, axis-tree JSON assets)
-- `xengine` — the smoke-detector library run across real Chromium/Firefox/WebKit with a divergence report
-- `resources` — live RAM/CPU/pagefile plus a memory-aware recommended worker count (no browser)
-- `sites_list` — list the configured named sites
-- `logs` — read the shared event log: summary / errors / tail
-- `doctor` *(no license required)* — read-only environment health check (dependencies, engines, browser launch/CDP, orphans, config)
-- `procs` *(no license required)* — census of ChromeWalk's own browser process trees with an orphan verdict; can reap verified orphans
-- `schema` — structured data (JSON-LD, microdata, RDFa, OpenGraph) plus Google required/recommended validation and diff
-- `cms` — CMS/platform fingerprint with evidence
-- `config` *(no license required)* — show the tuning config (value + source per key), or get one key
-- `compare` — page vs page / snapshot / baseline diff across visual, DOM, text, network, schema, SEO, and more layers, plus the 11.0 design-drift layers (design tokens, components, CSS rules, UX heuristics, perceptual similarity)
-- `design` — site-wide UI/UX design audit: design-token inventory with swatches and type scale, design-system conformance, component variant clusters with element crops, UX heuristic failures (contrast, tap targets, focus visibility, overflow, layout shift, above-the-fold CTA), drift against a saved baseline, and a score per page
-- `audit` — one-pass UI-uniformity audit bundle (audit.md + audit.json + shots/): uniformity ranking against a reference page, idiom census, element crops and a component sheet, design-token compliance per selector, responsive deltas, light/dark themes
-- `baseline` — stored-baseline visual regression per page and per selector (SSIM), with an anti-clobber gate for the pages a change should not have touched
-- `probe` — no-browser preflight of a URL: DNS/TCP/TLS, status, WAF/challenge, login wall, render class and a recommended strategy
-- `targets` — what ChromeWalk learned per host (wait strategy, timeouts, verdicts); show or forget
-- `reset` *(no license required)* — soft recovery: orphaned browsers, stale locks, the profile pool
-- `recommend` *(no license required)* — file a gap / bug report locally (secrets scrubbed)
-- `calls` *(no license required)* — this server's in-flight and recent calls, or one call's state/result
-- `cancel` *(no license required)* — cancel an in-flight call; its whole browser process tree is killed
-
-Full per-tool reference: https://chromewalk.com/docs/tool-fetch.html (and the sibling
-`tool-*.html` pages under https://chromewalk.com/docs/).
+Then try: *"Take phone and desktop screenshots of our home page."*
 
 ---
 
-## Install the ChromeWalk binary (once, per machine)
+## Install ChromeWalk
 
-Every client below talks to one local ChromeWalk install. Install it first:
+Every client below talks to one ChromeWalk install on your computer. Both install scripts download the release
+file, **check its SHA-256 against `SHA256SUMS.txt` and stop on a mismatch** (nothing is installed), install for
+your user without admin rights, and tell you the next step.
 
-Every [GitHub Release](https://github.com/chromewalk/app/releases) carries the install files and one
-`SHA256SUMS.txt` that lists the SHA-256 of **every** release file: `ChromeWalk-Setup-Windows.exe` (Windows installer),
-the Claude Desktop `.mcpb`, `ChromeWalk-macOS-AppleSilicon.pkg` (macOS, Apple Silicon, unsigned) and the two
-installer scripts `install.ps1` / `install.sh`. The scripts download the release file, **check its SHA-256
-against `SHA256SUMS.txt` and stop on a mismatch** (nothing is installed), install for your user without admin
-rights, and print the next step (sign up or activate).
-
-**Windows** — one line in PowerShell:
+**Windows:**
 
 ```powershell
 powershell -c "irm https://chromewalk.com/install.ps1 | iex"
 ```
 
-It installs the compiled `chromewalk.exe` — no Python source, no venv to build — plus a `cw.cmd` terminal shim,
-to `%LOCALAPPDATA%\Programs\ChromeWalk`, added to your **user** PATH; no admin required, then runs
-`chromewalk setup` (downloads Chrome-for-Testing). Options (parameters or environment variables, set before the
-one-liner): `-Version 14.0.1` / `CW_VERSION` pins a release, `-DryRun` / `CW_DRYRUN=1` downloads and verifies but
-installs nothing, `-SkipSetup` / `CW_SKIP_SETUP=1`, `-InstallDir`, `-From <folder|url>`.
-
-**macOS (Apple Silicon)** — one line in Terminal:
+**Mac (Apple Silicon):**
 
 ```bash
 curl -fsSL https://chromewalk.com/install.sh | bash
 ```
 
-It unpacks the package for your user — no admin password — into `~/.local/lib/chromewalk`, links `chromewalk`
-and `cw` into `~/.local/bin` (and adds that folder to `PATH` in `~/.zprofile`), then runs `chromewalk setup`.
-Options (after `bash -s --`): `--version 14.0.1` (or `CW_VERSION`) pins a release, `--dry-run` downloads and
-verifies but installs nothing, `--system` uses the package installer into `/usr/local` (asks for your admin
-password through `sudo`), `--skip-setup`, `--no-path`, `--prefix DIR`, `--uninstall`.
+**Prefer an installer?** Download [ChromeWalk for Windows](https://chromewalk.com/download/windows)
+(`ChromeWalk-Setup-Windows.exe`) or [ChromeWalk for Mac](https://chromewalk.com/download/mac)
+(`ChromeWalk-macOS-AppleSilicon.pkg`), or pick them from the [download page](https://chromewalk.com/download.html).
 
-**Verify first (recommended).** Download the script and `SHA256SUMS.txt` from the same release, compare the
-hash, read the script, then run it:
+<details>
+<summary><b>Windows details: install folder, options, SmartScreen, uninstall</b></summary>
 
-```powershell
-irm https://chromewalk.com/SHA256SUMS.txt -OutFile SHA256SUMS.txt
-irm https://chromewalk.com/install.ps1 -OutFile install.ps1
-(Get-FileHash install.ps1 -Algorithm SHA256).Hash.ToLower()      # must equal the install.ps1 line in SHA256SUMS.txt
-Select-String install.ps1 SHA256SUMS.txt
-powershell -ExecutionPolicy Bypass -File .\install.ps1 -DryRun   # verifies the installer, installs nothing
-powershell -ExecutionPolicy Bypass -File .\install.ps1
-```
+- The script installs the compiled `chromewalk.exe` (no Python, nothing to build) and a `cw.cmd` shortcut to
+  `%LOCALAPPDATA%\Programs\ChromeWalk`, adds it to your **user** PATH, then runs `chromewalk setup`, which downloads
+  the browsers ChromeWalk uses.
+- Options (parameters, or environment variables set before the one-liner):
+  - `-Version <version>` / `CW_VERSION` installs a specific release;
+  - `-DryRun` / `CW_DRYRUN=1` downloads and verifies but installs nothing;
+  - `-SkipSetup` / `CW_SKIP_SETUP=1`, `-InstallDir <folder>`, `-From <folder|url>`.
+- **SmartScreen:** the Windows installer is not code-signed yet, so the first time you run it from a browser
+  download, Windows may say "Windows protected your PC". Click **More info**, then **Run anyway**, or check the
+  checksum first (below). The install script avoids the warning.
+- **Uninstall:** Settings > Apps > Installed apps > ChromeWalk > Uninstall. This also removes ChromeWalk from your
+  AI apps.
 
-```bash
-curl -fsSLO https://chromewalk.com/SHA256SUMS.txt
-curl -fsSLO https://chromewalk.com/install.sh
-shasum -a 256 install.sh && grep install.sh SHA256SUMS.txt       # the two hashes must match
-bash install.sh --dry-run                                        # verifies the package, installs nothing
-bash install.sh
-```
+</details>
 
-**No script at all.** Download the Windows installer (https://chromewalk.com/download/windows) or the macOS package
-(https://chromewalk.com/download/mac) and `SHA256SUMS.txt` (https://chromewalk.com/SHA256SUMS.txt), or take them from the release page,
-compare `Get-FileHash <file> -Algorithm SHA256` / `shasum -a 256 <file>` with the line in `SHA256SUMS.txt`, then
-run the installer. The Windows installer is also offered at https://chromewalk.com/download.html. **Note:** the
-code-signing certificate for the Windows installer is still pending, so Windows SmartScreen may warn ("Windows
-protected your PC") the first time you run it downloaded in a browser — click "More info" -> "Run anyway", or
-verify the checksum first. The install script avoids the warning (a file fetched by PowerShell carries no
-download mark).
+<details>
+<summary><b>Mac details: install folder, options, Gatekeeper, uninstall</b></summary>
 
-**macOS and Gatekeeper.** The macOS package is **unsigned** (no Apple Developer ID) and built for **Apple
-Silicon** only; Intel Macs are not supported. The install script does not trigger Gatekeeper (a file fetched with
-`curl` is never quarantined). If you download the `.pkg` in a browser and double-click it, macOS blocks it the
-first time ("cannot be opened because Apple cannot check it for malicious software"): open **System Settings >
-Privacy & Security**, scroll down to the message that the `ChromeWalk` package was blocked, click **Open Anyway**,
-and confirm with your password or Touch ID. Or install it from Terminal:
-`sudo installer -pkg ChromeWalk-macOS-AppleSilicon.pkg -target /` (system-wide: `/usr/local/lib/chromewalk`,
-`/usr/local/bin/chromewalk`, `/usr/local/bin/cw`).
+- The script installs for your user, with no admin password, into `~/.local/lib/chromewalk`, links `chromewalk`
+  and `cw` into `~/.local/bin` (and adds that folder to `PATH` in `~/.zprofile`), then runs `chromewalk setup`.
+- Options (after `bash -s --`):
+  - `--version <version>` (or `CW_VERSION`) installs a specific release;
+  - `--dry-run` downloads and verifies but installs nothing;
+  - `--system` uses the package installer into `/usr/local` (asks for your admin password through `sudo`);
+  - `--skip-setup`, `--no-path`, `--prefix DIR`, `--uninstall`.
+- **Apple Silicon only** (M1 or later). Intel Macs are not supported.
+- **The Mac package is unsigned** (no Apple Developer ID). The install script doesn't trigger Gatekeeper. If you
+  download the `.pkg` in a browser and open it, macOS blocks it the first time ("cannot be opened because Apple
+  cannot check it for malicious software"). Open **System Settings > Privacy & Security**, scroll to the message
+  about the ChromeWalk package, click **Open Anyway**, and confirm with your password or Touch ID. Or install it
+  from Terminal: `sudo installer -pkg ChromeWalk-macOS-AppleSilicon.pkg -target /` (system-wide:
+  `/usr/local/lib/chromewalk`, `/usr/local/bin/chromewalk`, `/usr/local/bin/cw`).
+- **Uninstall:** `bash install.sh --uninstall` (add `--system` for the package install). It also removes ChromeWalk
+  from your AI apps (`chromewalk connect --remove`). Your licence, settings and downloaded browsers stay in
+  `~/Library/Application Support/ChromeWalk` until you delete that folder.
 
-**Uninstall.** Windows: Settings > Apps > Installed apps > ChromeWalk > Uninstall. macOS: `bash install.sh --uninstall`
-(add `--system` for the package install); it also takes ChromeWalk out of your AI apps' configs
-(`chromewalk connect --remove`). Your license, settings and downloaded browsers stay in
-`~/Library/Application Support/ChromeWalk` until you delete that folder.
+</details>
 
-**Linux** — no compiled Linux build or packaged installer yet.
-
-After install, run `cw connect` from a terminal — it detects every supported client already
-installed on your machine and registers ChromeWalk in each one automatically (idempotent,
-config-backed-up). The per-client steps below are the manual equivalent, and what `cw
-connect` does under the hood for each one.
+**Updates:** the Windows app updates itself. Each update is signed and checked before it installs, and if the new
+version fails its self-test your previous version comes back automatically (`cw update --defer <days>` waits a few
+days first). On a Mac, `cw update --check` tells you when a new release is out; re-run the installer to update.
+The Claude Desktop extension tells you when a new one is ready; install it over the old one.
+[More about updates](https://chromewalk.com/docs/auto-update.html).
 
 ---
 
-## Per-client install
+## Connect your AI app
 
-> **Read this first.** For every client below, the **recommended** step is to run
-> `cw connect` (or `cw connect <client-name>`, e.g. `cw connect codex`) — it detects each
-> client already installed on your machine and writes the correct config for you
-> (idempotent, backs up the existing config first).
+> **The easy way:** run `cw connect` (or `cw connect <app>`, for example `cw connect codex`). It finds each AI app
+> on your computer and adds ChromeWalk to its settings. It's safe to repeat, it saves a backup of a settings file
+> before its first change, and it never writes your licence key into any app. Preview what it would do with
+> `cw connect --dry-run --json`; undo with `cw connect --remove <app>`.
 >
-> If you'd rather hand-edit a config, the launch command is the same shape on every platform:
-> **command `chromewalk`, args `["mcp"]`** — never `cw`, and never through a shell (`cmd /c`
-> or otherwise). `cw`/`cw.cmd` is a convenience shim for typing at a terminal; on Windows it
-> is a `.cmd` file, which `child_process.spawn`/Rust's `Command` (what MCP clients actually
-> use to launch a local server) cannot execute directly without a shell — they fail with
-> `ENOENT` even though typing `cw` yourself works fine. `chromewalk` is a real executable
-> (`chromewalk.exe` on Windows, `chromewalk` on macOS) with no such limitation, which is why
-> every config below uses it, identically on Windows and macOS/Linux.
->
-> The installer puts `chromewalk` (and the `cw` shim) on your **user PATH**, so a bare
-> `"command": "chromewalk"` resolves correctly once you've opened a new terminal/restarted the
-> client after installing. If a client can't find it on PATH (or you want a config that
-> doesn't depend on PATH at all), use the absolute install path instead:
+> **Setting it up by hand?** Every app uses the same launch command: **command `chromewalk`, args `["mcp"]`**.
+> Don't use `cw`, and don't wrap it in a shell (`cmd /c` or otherwise). On Windows `cw` is a `.cmd` file, which AI
+> apps can't start directly. If an app can't find `chromewalk` on PATH, use the full path:
 > - Windows: `%LOCALAPPDATA%\Programs\ChromeWalk\chromewalk.exe`
-> - macOS: `~/.local/bin/chromewalk` (install script) or `/usr/local/bin/chromewalk` (package installer)
+> - Mac: `~/.local/bin/chromewalk` (install script) or `/usr/local/bin/chromewalk` (package installer)
 
-### Claude Desktop (.mcpb bundle)
+<details>
+<summary><b>Claude Desktop</b></summary>
 
-1. Download the bundle for your platform: https://chromewalk.com/download/claude always gives the bundle of the
-   latest [GitHub Release](https://github.com/chromewalk/app/releases). Today that's the Windows x64
-   bundle (`ChromeWalk-Claude-Extension.mcpb`) — the only bundle actually built and published. macOS (`darwin-arm64` / `darwin-x64`) bundles are planned (see
-   `.github/workflows/mcpb-binary.yml`, currently manual-dispatch-only and unvalidated) but
-   are **not yet published**; there is no Linux `.mcpb` bundle.
-2. Double-click it, or drag it onto Claude Desktop's Settings → Extensions panel.
-3. Enter your license key in the extension's settings (`license_key` field, optional), run
-   `cw activate <key>` if you also installed the `cw` CLI, or leave it empty and ask Claude to sign
-   you up (the `register` / `activate` tools).
+**Windows: use the extension.**
+
+1. Download it: https://chromewalk.com/download/claude (`ChromeWalk-Claude-Extension.mcpb`).
+2. Double-click it, or drag it onto Claude Desktop's Settings > Extensions panel.
+3. Paste your licence key into its optional License Key box, or leave it empty and ask Claude to sign you up.
+
+**Mac:** the extension is Windows only for now. Install ChromeWalk, then run `cw connect claude-desktop`.
+
+**Pick one.** If you use the extension, you don't need `cw connect claude-desktop` as well; doing both gives
+Claude two copies of ChromeWalk. If that happens, run `cw connect --remove claude-desktop`.
 
 Full walkthrough: https://chromewalk.com/docs/install-claude-desktop.html
 
-### Claude Code
+</details>
 
-Recommended — install the plugin from this repository's marketplace:
+<details>
+<summary><b>Claude Code</b></summary>
+
+Install the plugin from this repository's marketplace:
 
 ```
 /plugin marketplace add chromewalk/app
 /plugin install chromewalk@chromewalk
 ```
 
-or let `cw connect claude-code` register it for you — this runs
-`claude mcp add chromewalk -- <path-to-chromewalk> mcp` with the absolute installed binary
-path, avoiding the `cw.cmd` problem described above. If you register it by hand instead, do
-the same:
+Or run `cw connect claude-code`, which runs `claude mcp add` with the full path to ChromeWalk; it registers
+ChromeWalk for the folder you run it in. To make it available everywhere, add it by hand:
 
 ```
-claude mcp add chromewalk -- chromewalk mcp
+claude mcp add --scope user chromewalk -- chromewalk mcp
 ```
 
-A project-scoped `.mcp.json` you can copy into your own repo is included at
-[`/.mcp.json`](./.mcp.json) (uses the `chromewalk mcp` form, same on every platform).
+`--scope user` makes ChromeWalk available in every project, not only the folder you were in. A project-level
+[`.mcp.json`](./.mcp.json) you can copy into your own repo is included.
 
 Full walkthrough: https://chromewalk.com/docs/install-claude-code.html
 
-### OpenAI Codex CLI
+</details>
 
-Recommended: `cw connect codex` (backs up your existing `config.toml` first). To add it by
-hand, add to `~/.codex/config.toml`:
+<details>
+<summary><b>OpenAI Codex (app, command line and editor extension)</b></summary>
+
+Run `cw connect codex`. All three Codex apps read the same settings file, so one setup covers them. To add it by
+hand, put this in `~/.codex/config.toml`:
 
 ```toml
 [mcp_servers.chromewalk]
@@ -362,27 +198,22 @@ startup_timeout_sec = 30
 tool_timeout_sec = 1200
 ```
 
-(Same on Windows and macOS/Linux — no `cmd /c` wrapper needed; use the absolute path,
-e.g. `'C:\Users\<you>\AppData\Local\Programs\ChromeWalk\chromewalk.exe'` or
-`'/usr/local/bin/chromewalk'`, if `chromewalk` isn't resolving from PATH.)
-`startup_timeout_sec = 30` and `tool_timeout_sec = 1200` are intentional, not defaults:
-Codex's own defaults (10s startup / 60s per tool call) are too short for ChromeWalk's
-real-browser tools, which can legitimately run for several minutes on a heavy fetch/harvest.
+Keep the two timeouts. Codex's own defaults (about 10 seconds to start and 60 seconds per tool call) are too short
+for real-browser work, which can take several minutes. Use the full path if `chromewalk` isn't on PATH, for
+example `'C:\Users\<you>\AppData\Local\Programs\ChromeWalk\chromewalk.exe'` or `'/usr/local/bin/chromewalk'`.
 
 Full walkthrough: https://chromewalk.com/docs/install-codex.html
 
-### Cursor
+</details>
 
-Click **Add to Cursor**, or add the block below to `~/.cursor/mcp.json` / your project's
-`.cursor/mcp.json` by hand:
+<details>
+<summary><b>Cursor</b></summary>
+
+Click **Add to Cursor**, or run `cw connect cursor`:
 
 [![Add ChromeWalk to Cursor](https://cursor.com/deeplink/mcp-install-dark.svg)](https://cursor.com/install-mcp?name=chromewalk&config=eyJjb21tYW5kIjoiY2hyb21ld2FsayIsImFyZ3MiOlsibWNwIl19)
 
-(The badge links through `https://cursor.com/install-mcp?...`, Cursor's own HTTPS
-install-link redirector, rather than the `cursor://...` deeplink form directly — GitHub
-strips non-`http(s)` link targets from rendered Markdown, so a bare `cursor://` href would
-be dropped from this page. See `cursor.com/docs/context/mcp/install-links` for the deeplink
-format the redirector wraps.)
+To add it by hand, put this in `~/.cursor/mcp.json` or your project's `.cursor/mcp.json`:
 
 ```json
 {
@@ -395,18 +226,18 @@ format the redirector wraps.)
 }
 ```
 
-(Same on Windows and macOS/Linux. If `chromewalk` isn't resolving from PATH, use the
-absolute install path instead: `%LOCALAPPDATA%\Programs\ChromeWalk\chromewalk.exe` on
-Windows, `/usr/local/bin/chromewalk` on macOS.)
-
-Community directory listing text and submission notes: [`docs/cursor-directory-listing.md`](./docs/cursor-directory-listing.md).
+Cursor asks you once to trust the new tool server. Directory listing text:
+[`docs/cursor-directory-listing.md`](./docs/cursor-directory-listing.md).
 
 Full walkthrough: https://chromewalk.com/docs/install-cursor.html
 
-### VS Code / GitHub Copilot (MCP)
+</details>
 
-Add to your user or workspace `mcp.json` (`servers` key, not `mcpServers` — VS Code's schema
-differs from Claude's):
+<details>
+<summary><b>VS Code with GitHub Copilot</b></summary>
+
+Run `cw connect vscode`, or add this to your user or workspace `mcp.json`. VS Code uses `servers`, not
+`mcpServers`:
 
 ```json
 {
@@ -420,13 +251,12 @@ differs from Claude's):
 }
 ```
 
-(Same on Windows and macOS/Linux. If `chromewalk` isn't resolving from PATH, use the
-absolute install path instead: `%LOCALAPPDATA%\Programs\ChromeWalk\chromewalk.exe` on
-Windows, `/usr/local/bin/chromewalk` on macOS.)
+Use Copilot in Agent mode. Full walkthrough: https://chromewalk.com/docs/install-vscode.html
 
-Full walkthrough: https://chromewalk.com/docs/install-vscode.html
+</details>
 
-### Gemini CLI
+<details>
+<summary><b>Gemini CLI</b></summary>
 
 Install the extension from this repository:
 
@@ -434,19 +264,18 @@ Install the extension from this repository:
 gemini extensions install https://github.com/chromewalk/app
 ```
 
-This uses [`gemini-extension.json`](./gemini-extension.json) and [`GEMINI.md`](./GEMINI.md)
-at the repo root. This repo ships no source or binary, so the extension's `mcpServers` entry
-needs `chromewalk` (installed per the steps above) already on `PATH` — it uses the
-`command: "chromewalk", args: ["mcp"]` form described above, identically on every platform,
-so it launches correctly under Gemini CLI's own no-shell process spawning. Run `cw connect
-gemini-cli` after install to have it verified/re-written for your machine, or run
-`cw connect` to cover every detected client at once.
+It uses [`gemini-extension.json`](./gemini-extension.json) and [`GEMINI.md`](./GEMINI.md), and needs ChromeWalk
+installed (above) so that `chromewalk` is on PATH. Or run `cw connect gemini-cli`, which adds ChromeWalk to
+`~/.gemini/settings.json` for you.
 
 Full walkthrough: https://chromewalk.com/docs/install-gemini-cli.html
 
-### Windsurf / Cline / Continue
+</details>
 
-All three read a `mcpServers` block similar to Claude Desktop's. Add:
+<details>
+<summary><b>Windsurf, Cline and Continue</b></summary>
+
+Run `cw connect windsurf`, `cw connect cline` or `cw connect continue`, or add this block by hand:
 
 ```json
 {
@@ -459,48 +288,258 @@ All three read a `mcpServers` block similar to Claude Desktop's. Add:
 }
 ```
 
-(Same on Windows and macOS/Linux. If `chromewalk` isn't resolving from PATH, use the
-absolute install path instead: `%LOCALAPPDATA%\Programs\ChromeWalk\chromewalk.exe` on
-Windows, `/usr/local/bin/chromewalk` on macOS.)
+- Windsurf: `~/.codeium/windsurf/mcp_config.json`. Guide: https://chromewalk.com/docs/install-windsurf.html
+- Cline: VS Code's `.../saoudrizwan.claude-dev/settings/cline_mcp_settings.json`. Guide: https://chromewalk.com/docs/install-cline.html
+- Continue: `~/.continue/config.json`. Guide: https://chromewalk.com/docs/install-continue.html
 
-- Windsurf: `~/.codeium/windsurf/mcp_config.json` — https://chromewalk.com/docs/install-windsurf.html
-- Cline: VS Code global storage `.../saoudrizwan.claude-dev/settings/cline_mcp_settings.json` — https://chromewalk.com/docs/install-cline.html
-- Continue: `~/.continue/config.json` — https://chromewalk.com/docs/install-continue.html
+</details>
 
-### Any other MCP-capable client
+<details>
+<summary><b>Zed, GitHub Copilot CLI, Kiro, Amazon Q Developer, Kilo Code, Goose and Visual Studio</b></summary>
 
-Generic stdio launch command: `chromewalk mcp` (not `cw` — see the note above), identically
-on Windows and macOS/Linux, no shell involved. This is exactly what `cw connect` writes for
-JSON-config clients. See https://chromewalk.com/docs/install-generic-mcp.html.
+Run `cw connect` and it sets up each of these it finds. To do one app: `cw connect zed`, `cw connect copilot-cli`,
+`cw connect kiro`, `cw connect amazon-q`, `cw connect kilo-code`, `cw connect goose` or `cw connect visual-studio`
+(Visual Studio is Windows only). `cw connect --list` shows which apps are installed and which already have
+ChromeWalk.
+
+</details>
+
+<details>
+<summary><b>Any other MCP app</b></summary>
+
+Use the launch command `chromewalk mcp` (not `cw`), with no shell around it, on Windows and Mac alike. This is
+exactly what `cw connect` writes. `cw connect --dry-run --json` prints it and changes nothing.
+Guide: https://chromewalk.com/docs/install-generic-mcp.html
+
+</details>
+
+<details>
+<summary><b>If ChromeWalk doesn't show up in your AI app</b></summary>
+
+1. Open the AI app once, then close it: `cw connect` only sees apps that have created their settings folder.
+2. Run `cw connect --list`, then `cw connect <app>` again.
+3. Fully quit and restart the AI app. Most apps only load their tools when they start.
+4. Approve the new tool server if the app asks (Cursor, VS Code and Cline do).
+5. Ask the app to "run the ChromeWalk doctor". If it answers, the connection works.
+6. Still nothing? Run `cw mcp-selftest` in a terminal. It should end with "SELFTEST PASS".
+
+</details>
+
+**Skills:** ready-made instructions for Claude Code, Cursor and Codex (release checks, cross-browser testing,
+onboarding and troubleshooting) are in [`skills/`](./skills/). Copy them into your agent's skills folder.
 
 ---
 
-## What's in this repository
+## Licence and activation
+
+ChromeWalk is **proprietary software and needs a licence key**. There is no keyless trial: until a key is activated
+on the computer, every tool that opens a browser or checks a page replies "license required" and tells your AI how
+to sign you up.
+
+**What works before you activate:** installing, connecting your AI apps, help on every tool, and these tools:
+sign-up and activation (`register`, `activate`), the health check (`doctor`), process clean-up (`procs`, `reset`),
+settings (`config`), the job list and cancel (`calls`, `cancel`) and saving a problem note (`recommend`).
+
+**How to get and activate a key:**
+
+1. **Sign up** at https://chromewalk.com/register.html, or ask your AI to sign you up (the `register` tool). The key
+   is emailed to you and is tied to that email address. It is never shown in the chat.
+2. **Activate** in any one of these ways:
+   - ask your AI to activate it (the `activate` tool), or run `cw activate <key>` in a terminal if you'd rather keep
+     the key out of the chat;
+   - paste it into the Claude Desktop extension's License Key box;
+   - set the `CHROMEWALK_LICENSE` environment variable (read when the ChromeWalk server starts; it activates the
+     device if it isn't already);
+   - for CI, point `CHROMEWALK_LICENSE_FILE` at a key file.
+3. **Windows: activate once per computer.** `cw activate <key> --remember` keeps the key in Windows Credential
+   Manager, and every other ChromeWalk install for your user activates itself.
+
+**Good to know:**
+
+- **Two devices per licence.** To move to a new computer, run `chromewalk license deactivate` on the old one (or
+  reset the device from your account page), then activate the new one.
+- **Online once.** Activation needs the internet. After that ChromeWalk renews in the background every 90 days, and
+  keeps working offline for up to 90 days past a renewal it couldn't make. This grace period is only for an
+  already-activated licence; it is not a trial. A cancelled licence stops working straight away.
+
+Full terms: [`LICENSE`](./LICENSE) and https://chromewalk.com/LICENSE.txt. Terms of Use:
+https://chromewalk.com/terms.html.
+
+---
+
+## Privacy
+
+ChromeWalk runs on your computer. The pages it opens stay there.
+
+**What stays on your computer:** page content, screenshots and captured files, file paths, your browser profiles,
+logins and saved sessions, and your proxy and Nimble passwords.
+
+**What ChromeWalk sends to chromewalk.com:**
+
+- **Licence checks**: your key, the email you gave with it (if any), a salted hash of your machine ID, your install
+  ID, ChromeWalk version and operating system, sent to the licence server when you activate and when it renews.
+- **Update checks**: your release channel and installed version.
+- **Usage events**, linked to your licence. These are **a condition of the licence and can't be turned off**. Each
+  one carries:
+  - an install ID, a salted hash of your machine ID, and a SHA-256 hash of your licence key (`license_hash`), never
+    the key itself;
+  - which tool ran, whether from the command line or an AI app, its exit code and a rough duration, and for an
+    error only its type and a fixed failure label;
+  - the **names** of the options used, never their values;
+  - **the web address the tool worked on and its domain**, with logins, the port, the query string, anything after
+    `#` and secret-looking path parts removed on your computer first;
+  - your ChromeWalk version, operating system and CPU type, which browser engines are installed, CPU cores and a
+    memory range; at install and activation also your language, time-zone offset, OS build, whether ChromeWalk runs
+    as administrator, a disk-space range and how many days ago it was installed.
+- **Feedback**, only when you send it with `chromewalk feedback`.
+
+**Never sent:** page content, screenshots, files, file paths, option values, query strings, passwords, proxy or
+Nimble credentials, your user or machine name, or your licence key in usage events.
+
+**Only if you turn it on:** with the Nimble network option, your browser's traffic goes through your own Nimble
+account; with the Nimble cloud fallback, Nimble opens the page for you.
+
+Run `cw telemetry status` to see exactly what your install sends. Full field list:
+https://chromewalk.com/docs/privacy-telemetry.html. Privacy Policy: https://chromewalk.com/privacy.html.
+
+---
+
+## Verify your download
+
+Every [GitHub Release](https://github.com/chromewalk/app/releases) has one `SHA256SUMS.txt` with the SHA-256 of every
+release file: `ChromeWalk-Setup-Windows.exe`, `ChromeWalk-Claude-Extension.mcpb`, `ChromeWalk-macOS-AppleSilicon.pkg`,
+`install.ps1` and `install.sh`. The install scripts check this for you; to check by hand, compare the hash, read the
+script, then run it.
+
+**Windows:**
+
+```powershell
+irm https://chromewalk.com/SHA256SUMS.txt -OutFile SHA256SUMS.txt
+irm https://chromewalk.com/install.ps1 -OutFile install.ps1
+(Get-FileHash install.ps1 -Algorithm SHA256).Hash.ToLower()      # must equal the install.ps1 line in SHA256SUMS.txt
+Select-String install.ps1 SHA256SUMS.txt
+powershell -ExecutionPolicy Bypass -File .\install.ps1 -DryRun   # verifies the installer, installs nothing
+powershell -ExecutionPolicy Bypass -File .\install.ps1
+```
+
+**Mac:**
+
+```bash
+curl -fsSLO https://chromewalk.com/SHA256SUMS.txt
+curl -fsSLO https://chromewalk.com/install.sh
+shasum -a 256 install.sh && grep install.sh SHA256SUMS.txt       # the two hashes must match
+bash install.sh --dry-run                                        # verifies the package, installs nothing
+bash install.sh
+```
+
+**Installer files:** download the file and https://chromewalk.com/SHA256SUMS.txt, then compare
+`Get-FileHash <file> -Algorithm SHA256` (Windows) or `shasum -a 256 <file>` (Mac) with its line in `SHA256SUMS.txt`.
+
+---
+
+<details>
+<summary><b>The 35 tools</b></summary>
+
+Help works on every tool before you activate (`help: "brief"` or `help: "full"`); it never runs the tool.
+
+| Tool | What it does | Before activation |
+|---|---|---|
+| `register` | Emails you a licence key | Yes |
+| `activate` | Activates your licence key (never echoed back) | Yes |
+| `fetch` | Opens a page in a real browser and returns its text, status and title | |
+| `screenshot` | Screenshots of a page, a list of pages, or many screen sizes | |
+| `render` | Shows a page in Chromium, Firefox and WebKit and highlights pixel differences | |
+| `webinspect` | Console errors, network log, loading speed (Core Web Vitals) and basic accessibility | |
+| `pwa` | Checks whether a web app is installable and works offline | |
+| `notify` | Tests a site's browser-notification prompt | |
+| `jsonquery` | Searches, flattens and counts JSON data, without a browser | |
+| `api` | Runs a set of API tests in parallel, slowing down if the server asks | |
+| `flow` | Follows scripted clicks and typing to reach logged-in pages | |
+| `dump` | Saves everything a page loads, plus screenshots | |
+| `drive` | Controls a live ChromeWalk browser window: go to, read, run, screenshot | |
+| `smoke` | Quick, self-checking tests of many pages and screen sizes at once | |
+| `harvest` | Collects a store's products (prices, images, specs, fitment) into JSON or CSV | |
+| `facets` | Lists a store's filters and their options | |
+| `xengine` | Runs the same checks in Chromium, Firefox and WebKit and reports which differs | |
+| `resources` | Shows memory and CPU, and how many browsers can safely run | |
+| `sites_list` | Lists your saved site presets | |
+| `logs` | Reads ChromeWalk's event log | |
+| `doctor` | Health check of the installation | Yes |
+| `procs` | Lists ChromeWalk's own browsers and closes abandoned ones | Yes |
+| `schema` | Reads and checks a page's structured data (JSON-LD, microdata, RDFa, Open Graph) | |
+| `cms` | Detects the platform a site runs on | |
+| `config` | Shows ChromeWalk's settings | Yes |
+| `compare` | Compares two pages, or a page with a saved version, across visual, content, SEO, design and more | |
+| `design` | Site-wide design audit: colours, type, spacing, components and drift | |
+| `audit` | Consistency and SEO audit in one pass, with ranked fixes | |
+| `baseline` | Saves how pages look and flags unexpected visual changes later | |
+| `probe` | Checks, without a browser, whether a site is reachable, blocks automated visits or needs a login | |
+| `targets` | What ChromeWalk has learned about each site from earlier runs | |
+| `reset` | Soft reset: closes stuck browsers and clears stale locks | Yes |
+| `recommend` | Saves a problem note on your computer (secrets removed) | Yes |
+| `calls` | Lists running and recent jobs | Yes |
+| `cancel` | Stops a running job and its browsers | Yes |
+
+Per-tool reference: https://chromewalk.com/docs/ (one `tool-*.html` page per tool, for example
+https://chromewalk.com/docs/tool-fetch.html).
+
+</details>
+
+<details>
+<summary><b>Command line and exit codes</b></summary>
+
+Everything your AI can do is also a terminal command (`chromewalk <command>`, or `cw <command>`), for scripts and CI.
+`--json` prints pure JSON. Every command shares one set of exit codes:
+
+| Code | Meaning |
+|---|---|
+| 0 | OK |
+| 2 | Usage or bad arguments |
+| 3 | Checked failure: the tool ran and the target failed a check; still a valid result |
+| 4 | Licence required |
+| 5 | Infrastructure failure (browser launch or a missing dependency); retry, or run `doctor` |
+| 6 | Timed out or cancelled |
+| 1 | Unexpected internal error |
+
+Release notes for each version: [CHANGELOG.md](./CHANGELOG.md) and the
+[GitHub Releases](https://github.com/chromewalk/app/releases).
+
+</details>
+
+<details>
+<summary><b>What's in this repository</b></summary>
+
+This is the public listing and install package for ChromeWalk. It holds no source code, no signing keys and no
+server code; the compiled installers are attached to [GitHub Releases](https://github.com/chromewalk/app/releases).
 
 ```
-README.md                    - this file
-LICENSE                      - proprietary license notice (see chromewalk.com/LICENSE.txt for full EULA)
-SECURITY.md                  - how to report a vulnerability
-CHANGELOG.md                 - pointer to the release changelog
-server.json                  - MCP Registry server descriptor
-gemini-extension.json        - Gemini CLI extension manifest
-GEMINI.md                    - context file loaded by the Gemini CLI extension
-.mcp.json                    - example Claude Code project-scope MCP config
+README.md                        - this file
+LICENSE                          - licence notice (full EULA at chromewalk.com/LICENSE.txt)
+SECURITY.md                      - how to report a vulnerability
+CHANGELOG.md                     - where to find the release notes
+server.json                      - MCP Registry server descriptor
+gemini-extension.json            - Gemini CLI extension manifest
+GEMINI.md                        - context file loaded by the Gemini CLI extension
+.mcp.json                        - example Claude Code project MCP config
 .claude-plugin/plugin.json       - Claude Code plugin manifest
-.claude-plugin/marketplace.json  - Claude Code marketplace listing (this repo, one plugin)
-.github/ISSUE_TEMPLATE/      - bug report / feature request templates
-docs/cursor-directory-listing.md - Cursor community-directory submission text
+.claude-plugin/marketplace.json  - Claude Code marketplace listing
+skills/                          - skills for Claude Code, Cursor and Codex
+.github/ISSUE_TEMPLATE/          - bug report and feature request templates
+docs/cursor-directory-listing.md - Cursor directory submission text
 ```
 
-No `.py`, no `config.php`, no signing material, and no server code live in this repository.
-The compiled `.mcpb` bundle and platform installers are attached to
-[GitHub Releases](https://github.com/chromewalk/app/releases); the license/activation
-server is not part of this repo at all.
+</details>
 
-## Support
+---
 
+## Support and links
+
+- Website: https://chromewalk.com
+- What is ChromeWalk: https://chromewalk.com/docs/what-is-chromewalk.html
 - Docs: https://chromewalk.com/docs/
 - FAQ: https://chromewalk.com/faq.html
-- Issues: use this repository's [issue tracker](https://github.com/chromewalk/app/issues)
-  for install/packaging problems. For license/account issues, use the contact info in the
-  Privacy Policy / Terms of Use at https://chromewalk.com.
+- Install or packaging problems: this repository's [issue tracker](https://github.com/chromewalk/app/issues)
+- Licence or account questions: the contact details in the [Privacy Policy](https://chromewalk.com/privacy.html)
+  and [Terms of Use](https://chromewalk.com/terms.html)
+- Security: [`SECURITY.md`](./SECURITY.md)
+- Licence: [`LICENSE`](./LICENSE)
