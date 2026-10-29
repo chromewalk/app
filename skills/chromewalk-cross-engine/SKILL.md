@@ -7,7 +7,7 @@ description: Test a web app in Chromium, Firefox and WebKit (Safari's engine) wi
 
 `xengine` runs the SAME suite file that `smoke` uses in real Chromium, Firefox and WebKit (via
 Playwright) and reports per page and engine pass/fail plus a `divergences[]` list: which engine
-differed on which check. Since 13.0 it can log in on every engine, so the screens behind a login are
+differed on which check. It can log in on every engine, so the screens behind a login are
 covered too. MCP tool: `chromewalk_xengine`; CLI: `chromewalk xengine`.
 
 Honest limit: WebKit here is Safari's engine, not the Safari app. It finds layout, CSS and JavaScript

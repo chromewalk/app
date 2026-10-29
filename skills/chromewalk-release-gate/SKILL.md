@@ -6,9 +6,10 @@ description: Use ChromeWalk as a release gate - run the smoke suite (chromewalk_
 # ChromeWalk release gate
 
 ChromeWalk runs locally and drives real browsers. `smoke` is the gate: every (page x viewport) unit
-runs in its own isolated headless browser, ten detectors fire (console errors, uncaught exceptions,
+runs in its own isolated headless browser, twelve detectors fire (console errors, uncaught exceptions,
 unhandled rejections, "undefined" text, `input=undefined`, handler undefined, horizontal overflow,
-top-right overflow, modal overlap, mobile overlay on desktop), plus your steps, asserts, compare and
+overflow by element rectangle, overflow before hydration, top-right overflow, modal overlap, mobile
+overlay on desktop), plus your steps, asserts, compare and
 design hooks. Use the MCP tool `chromewalk_smoke` when it is connected, otherwise the CLI
 (`chromewalk smoke ...`, or `cw smoke ...` from a source checkout). Always ask for JSON (`--json`).
 

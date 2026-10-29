@@ -148,7 +148,7 @@ The Claude Desktop extension tells you when a new one is ready; install it over 
 **Windows: use the extension.**
 
 1. Download it: https://chromewalk.com/download/claude (`ChromeWalk-Claude-Extension.mcpb`).
-2. Double-click it, or drag it onto Claude Desktop's Settings > Extensions panel.
+2. In Claude Desktop open **Claude > Settings > Extensions > Install Extension** and pick the file (double-clicking it may also work on the regular desktop app, but not on a Microsoft Store install).
 3. Paste your licence key into its optional License Key box, or leave it empty and ask Claude to sign you up.
 
 **Mac:** the extension is Windows only for now. Install ChromeWalk, then run `cw connect claude-desktop`.

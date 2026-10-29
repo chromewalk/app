@@ -3,7 +3,7 @@
   "name": "io.github.chromewalk/chromewalk",
   "title": "ChromeWalk",
   "description": "Local browser automation for AI agents: real-browser fetch, capture, smoke tests, cross-engine QA.",
-  "version": "14.0.1",
+  "version": "15.0.0",
   "repository": {
     "url": "https://github.com/chromewalk/app",
     "source": "github"
@@ -12,7 +12,7 @@
   "packages": [
     {
       "registryType": "mcpb",
-      "identifier": "https://github.com/chromewalk/app/releases/download/v14.0.1/ChromeWalk-Claude-Extension.mcpb",
+      "identifier": "https://github.com/chromewalk/app/releases/download/v15.0.0/ChromeWalk-Claude-Extension.mcpb",
       "transport": {
         "type": "stdio"
       },
@@ -29,7 +29,7 @@
           "isRequired": false
         }
       ],
-      "fileSha256": "08150e3a2def2d866e0fa7a4a96d38f1c8297e362e1b60b5193d10961682d659"
+      "fileSha256": "39c02660372b938eaa2ebeea4c7885e3e945e6319f163e574204304aa46cd5f4"
     }
   ],
   "_meta": {
