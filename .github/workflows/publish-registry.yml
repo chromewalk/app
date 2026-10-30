@@ -1,0 +1,43 @@
+# Publish server.json to the MCP Registry as io.github.chromewalk/* (GitHub OIDC proves the org; no token is stored).
+# Run by hand after a release: Actions > publish-registry > Run workflow.
+name: publish-registry
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+env:
+  MCP_PUBLISHER_VERSION: "1.8.1"
+  MCP_PUBLISHER_SHA256: "a06c9096dcb9727c13555b6be26c7effa707b01f06a4c561ba7a3635443cf2cc"
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch the pinned mcp-publisher
+        run: |
+          f=mcp-publisher_linux_amd64.tar.gz
+          curl -fsSL -o "$f" "https://github.com/modelcontextprotocol/registry/releases/download/v${MCP_PUBLISHER_VERSION}/$f"
+          echo "${MCP_PUBLISHER_SHA256}  $f" | sha256sum -c -
+          tar -xzf "$f" mcp-publisher
+
+      - name: Check the listing points at a published release file
+        run: |
+          url=$(jq -r '.packages[0].identifier' server.json)
+          want=$(jq -r '.packages[0].fileSha256' server.json)
+          echo "package: $url"
+          # HEAD without following the redirect, so the check never counts as a download
+          code=$(curl -sI -o /dev/null -w '%{http_code}' -A "ChromeWalkSiteVerification/1.0" "$url")
+          test "$code" = "302"
+          test -n "$want" && test "$want" != "null"
+
+      - name: Validate and publish
+        run: |
+          ./mcp-publisher validate server.json
+          ./mcp-publisher login github-oidc
+          ./mcp-publisher publish server.json
