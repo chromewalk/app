@@ -13,6 +13,33 @@ refactors, and packaging work across many pre-release forks). What you get here 
   the latest release.
 - The **user-facing** highlights for that release, copied into each GitHub Release's notes.
 
+## 16.0.0
+
+**The Mac package is signed and notarized by Apple** (Developer ID), so it opens without a Gatekeeper warning; Windows stays
+signed. Still 35 MCP tools; no option removed.
+
+- **Wait for slow pages** - `--wait-for`, `--wait-text`, `--settle` and `--wait-strict` on render and xengine: a timeout is a
+  warning, or a failure with `--wait-strict`.
+- **Clearer cross-browser results** - a failed page states its cause (for example HTTP 404), WebKit failures name unsupported
+  emulation, and `--viewport WxH@2` applies the device scale in all three engines.
+- **Design checks** - an error page no longer passes, padded boxes are not counted as buttons, no false focus-outline errors,
+  a missing mobile viewport tag is one clear finding, and old baselines get a re-baseline note.
+- **Smaller things** - usage errors and `--help` answer about three times faster with "did you mean" suggestions,
+  `drive --close` works again on recent Windows 11 builds, and every option is described in help.
+
+## 15.0.0
+
+**The first signed Windows release.** The installer, uninstaller and `chromewalk.exe` carry a code-signing signature from
+Cassicode, so Windows shows a named publisher. Still 35 MCP tools; no option removed.
+
+- **Device and permission emulation** - `--permissions`, `--geolocation`, `--fake-media`, `--fake-video`, `--fake-audio`,
+  `--lang` and `--timezone` on render, xengine, smoke, flow and drive, with a per-engine report of what was applied and what
+  an engine cannot do.
+- **Update from Claude Desktop** - `chromewalk update --extension` downloads and verifies the new extension and opens the
+  install prompt; an optional once-a-day notice in chat that you can turn off.
+- **Smaller things** - `cw --version` works without Python, doctor warns before the update signature expires, and `--proxy` /
+  `--network` now work on more tools.
+
 ## 14.0.1
 
 Organisation move and polish. This repository is the new home of the ChromeWalk downloads. Release files now have stable,

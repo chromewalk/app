@@ -99,7 +99,7 @@ curl -fsSL https://chromewalk.com/install.sh | bash
 </details>
 
 <details>
-<summary><b>Mac details: install folder, options, Gatekeeper, uninstall</b></summary>
+<summary><b>Mac details: install folder, options, signing, uninstall</b></summary>
 
 - The script installs for your user, with no admin password, into `~/.local/lib/chromewalk`, links `chromewalk`
   and `cw` into `~/.local/bin` (and adds that folder to `PATH` in `~/.zprofile`), then runs `chromewalk setup`.
@@ -109,10 +109,8 @@ curl -fsSL https://chromewalk.com/install.sh | bash
   - `--system` uses the package installer into `/usr/local` (asks for your admin password through `sudo`);
   - `--skip-setup`, `--no-path`, `--prefix DIR`, `--uninstall`.
 - **Apple Silicon only** (M1 or later). Intel Macs are not supported.
-- **The Mac package is unsigned** (no Apple Developer ID). The install script doesn't trigger Gatekeeper. If you
-  download the `.pkg` in a browser and open it, macOS blocks it the first time ("cannot be opened because Apple
-  cannot check it for malicious software"). Open **System Settings > Privacy & Security**, scroll to the message
-  about the ChromeWalk package, click **Open Anyway**, and confirm with your password or Touch ID. Or install it
+- **The Mac package is signed and notarized by Apple** (Developer ID, CassiCode LLC). If you download the `.pkg` in a
+  browser, it opens normally with a double-click, with no Gatekeeper warning. Or install it
   from Terminal: `sudo installer -pkg ChromeWalk-macOS-AppleSilicon.pkg -target /` (system-wide:
   `/usr/local/lib/chromewalk`, `/usr/local/bin/chromewalk`, `/usr/local/bin/cw`).
 - **Uninstall:** `bash install.sh --uninstall` (add `--system` for the package install). It also removes ChromeWalk
