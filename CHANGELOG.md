@@ -13,6 +13,11 @@ refactors, and packaging work across many pre-release forks). What you get here 
   the latest release.
 - The **user-facing** highlights for that release, copied into each GitHub Release's notes.
 
+## 16.0.1
+
+**Updates are signed with a new key; this release is needed once to keep receiving automatic updates. Install it from
+chromewalk.com/download.** After that, updates are automatic again. Nothing else changes: same 35 MCP tools, same options.
+
 ## 16.0.0
 
 **The Mac package is signed and notarized by Apple** (Developer ID), so it opens without a Gatekeeper warning; Windows stays
